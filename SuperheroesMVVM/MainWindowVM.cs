@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SuperheroesMVVM
 {
-    class MainWindowVM : INotifyPropertyChanged
+    class MainWindowVM : ObservableObject
     {
         private List<Superheroe> heroes;
 
@@ -17,9 +19,8 @@ namespace SuperheroesMVVM
         {
             get { return heroeActual; }
             set 
-            { 
-                heroeActual = value;
-                NotifyPropertyChanged("HeroeActual");
+            {
+                SetProperty(ref heroeActual, value);
             }
         }
 
@@ -29,9 +30,8 @@ namespace SuperheroesMVVM
         {
             get { return total; }
             set 
-            { 
-                total = value;
-                NotifyPropertyChanged("Total");
+            {
+                SetProperty(ref total, value);
             }
         }
 
@@ -41,19 +41,21 @@ namespace SuperheroesMVVM
         {
             get { return actual; }
             set 
-            { 
-                actual = value;
-                NotifyPropertyChanged("Actual");
+            {
+                SetProperty(ref actual, value);
             }
         }
 
-
+        public RelayCommand SiguienteComand { get; }
+        public RelayCommand AnteriorComand { get; }
         public MainWindowVM()
         {
-            heroes = Superheroe.GetSamples();
+            heroes = ListadoSuperheroes.GetSamples();
             HeroeActual = heroes[0];
             Total = heroes.Count;
             Actual = 1;
+            SiguienteComand = new RelayCommand(Siguiente);
+            AnteriorComand = new RelayCommand(Anterior);
         }
 
         public void Siguiente()
@@ -72,13 +74,6 @@ namespace SuperheroesMVVM
                 Actual--;
                 HeroeActual = heroes[Actual-1];
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
